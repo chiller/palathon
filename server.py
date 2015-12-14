@@ -1,6 +1,6 @@
-from flask import Flask
+from flask import Flask, request, send_from_directory
 from rtree import index
-
+import os
 
 def init_index(name='3d_objects'):
     p = index.Property()
@@ -25,11 +25,17 @@ def query(query, distance=20):
     # return [i for i in idx3d.intersection(query_box)]
     return [i.object for i in idx3d.nearest(query_box, 20, objects=True)]
 
-app = Flask(__name__)
+
+here = os.path.dirname(__file__)
+app = Flask(__name__, static_url_path=here)
+
+@app.route('/static/<path:path>')
+def send_static(path):
+    return send_from_directory('static', path)
 
 @app.route("/")
 def hello():
-    return "Hello World!"
+    return app.send_static_file('index.html')
 
 @app.route('/colors/<int:distance>/<int:r>/<int:g>/<int:b>')
 def show_post(distance, r, g, b):
