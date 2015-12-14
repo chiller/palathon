@@ -21,24 +21,23 @@ def init_index(name='3d_index'):
     p.dimension = 3
     p.dat_extension = 'data'
     p.idx_extension = 'index'
-    return endex.Index(name, properties=p)
+    return index.Index(name, properties=p)
 
 idx3d = init_index()
-generate_colors(rebuild=False)
+generate_colors(rebuild=True)
 
 # API nearest
 
-tolerance = 20
-query = (148, 100, 211)
-query_box = (
-    query[0]-tolerance,
-    query[1]-tolerance,
-    query[2]-tolerance,
-    query[0]+tolerance,
-    query[1]+tolerance,
-    query[2]+tolerance
-)
-print query
-print [i for i in  idx3d.intersection( query_box)]
+def query(coordinate, distance=20):
+    query = (148, 100, 211)
+    query_box = (
+        query[0]-distance,
+        query[1]-distance,
+        query[2]-distance,
+        query[0]+distance,
+        query[1]+distance,
+        query[2]+distance
+    )
+    return [db[i] for i in idx3d.intersection(query_box)]
 
-
+print query((150,150,150), 20)
