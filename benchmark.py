@@ -1,3 +1,4 @@
+from flask import Flask
 from rtree import index
 
 
@@ -6,14 +7,12 @@ db = {}
 
 def generate_colors(rebuild=True):
 
-    cid = 1
     for i in xrange(0, 255, 16):
         for j in xrange(0, 255, 16):
             for k in xrange(0, 255, 16):
-                db[cid] = str( (i,j,k) )
+                cid = 1000000*i + 1000*j + k
                 if rebuild:
                     idx3d.insert(cid, (i,j,k,i,j,k))
-                cid = cid + 1
 
 
 def init_index(name='3d_index'):
@@ -24,12 +23,11 @@ def init_index(name='3d_index'):
     return index.Index(name, properties=p)
 
 idx3d = init_index()
-generate_colors(rebuild=True)
+generate_colors(rebuild=False)
 
 # API nearest
 
-def query(coordinate, distance=20):
-    query = (148, 100, 211)
+def query(query, distance=20):
     query_box = (
         query[0]-distance,
         query[1]-distance,
@@ -38,6 +36,19 @@ def query(coordinate, distance=20):
         query[1]+distance,
         query[2]+distance
     )
-    return [db[i] for i in idx3d.intersection(query_box)]
+    return [i for i in idx3d.intersection(query_box)]
 
-print query((150,150,150), 20)
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+    return "Hello World!"
+
+@app.route('/colors/<int:distance>/<int:r>/<int:g>/<int:b>')
+def show_post(distance, r, g, b):
+    result = query((r, g, b), distance)
+    return str([str(i) for i in result])
+
+if __name__ == "__main__":
+    app.debug = True
+    app.run()
