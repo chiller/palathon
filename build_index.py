@@ -1,5 +1,4 @@
 import random
-from flask import Flask
 from rtree import index
 
 def generate_colors(rebuild=True):
@@ -18,6 +17,8 @@ def generate_colors(rebuild=True):
                     )
 
 
+import ast
+
 def init_index(name):
     p = index.Property()
     p.dimension = 3
@@ -25,8 +26,26 @@ def init_index(name):
     p.idx_extension = 'index'
     return index.Index(name, properties=p)
 
-idx3d = init_index(name="3d_objects")
-generate_colors(rebuild=True)
+idx3d = init_index(name="3d_real_objects")
+f = open('./products_with_colours.csv')
+
+for row in f:
+    fields = row.split('|')
+    if fields[0]!='sku':
+        index = fields[2]
+        colours = ast.literal_eval(fields[1])
+        colour = (colours[0][0][0],colours[0][0][1],colours[0][0][2],
+                  colours[0][0][0],colours[0][0][1],colours[0][0][2])
+        product = {}
+        product['sku'] = fields[0]
+        product['gallery_img'] = fields[3]
+        product['colour_img'] = fields[4]
+        product['product_url'] = fields[5]
+        idx3d.insert(
+            int(index),
+            colour,
+            obj=product
+        )
 
 
 def query(query, distance=20):
@@ -41,4 +60,4 @@ def query(query, distance=20):
     # return [i for i in idx3d.intersection(query_box)]
     return [i.object for i in idx3d.nearest(query_box, 20, objects=True)]
 
-print query((10,10,10),10)
+print query((200,0,0), 10)

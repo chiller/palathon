@@ -38,9 +38,10 @@ function showColorsForImage(image){
         colorstring = color.join(", ")
         return "rgba(" + colorstring + ",100)";
     }
-    $("#results").css(
+    var main_color = colorThief.getColor(image);
+    $("#maincolor").css(
         "background-color",
-        getColorString(colorThief.getColor(image))
+        getColorString(main_color)
     );
 
     colorThief.getPalette(image).forEach(function(color){
@@ -49,8 +50,16 @@ function showColorsForImage(image){
        $("#palette").append(paletteelem);
     })
 
-
+    getResultsForImage(main_color);
 }
+
+function getResultsForImage(color){
+
+    $.get("/colors/5/"+ color.join("/"), function(result){
+        result.forEach(function(elem, i){
+        $("#results").append("<a href='"+elem.product_url+"'><img src='"+ elem.gallery_img +"' </img></a>")
+    })
+})}
 
 $(function(){
     initDropZone()
