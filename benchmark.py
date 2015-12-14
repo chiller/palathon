@@ -36,7 +36,8 @@ def query(query, distance=20):
         query[1]+distance,
         query[2]+distance
     )
-    return [i for i in idx3d.intersection(query_box)]
+    # return [i for i in idx3d.intersection(query_box)]
+    return [i for i in idx3d.nearest(query_box, 20)]
 
 app = Flask(__name__)
 
