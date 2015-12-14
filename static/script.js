@@ -55,7 +55,7 @@ function showColorsForImage(image){
 
 function getResultsForImage(color){
 
-    $.get("/colors/5/"+ color.join("/"), function(result){
+    $.get("/colors/3/"+ color.join("/"), function(result){
         result.forEach(function(elem, i){
         $("#results").append("<a href='"+elem.product_url+"'><img src='"+ elem.gallery_img +"' </img></a>")
     })

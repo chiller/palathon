@@ -1,5 +1,6 @@
 import random
 from rtree import index
+import csv
 
 def generate_colors(rebuild=True):
     for i in xrange(0, 255, 16):
@@ -27,25 +28,33 @@ def init_index(name):
     return index.Index(name, properties=p)
 
 idx3d = init_index(name="3d_real_objects")
-f = open('./products_with_colours.csv')
 
-for row in f:
-    fields = row.split('|')
-    if fields[0]!='sku':
-        index = fields[2]
-        colours = ast.literal_eval(fields[1])
-        colour = (colours[0][0][0],colours[0][0][1],colours[0][0][2],
-                  colours[0][0][0],colours[0][0][1],colours[0][0][2])
-        product = {}
-        product['sku'] = fields[0]
-        product['gallery_img'] = fields[3]
-        product['colour_img'] = fields[4]
-        product['product_url'] = fields[5]
-        idx3d.insert(
-            int(index),
-            colour,
-            obj=product
-        )
+
+def read_csv_file(data_filename):
+    data = []
+    with open(data_filename, 'rb') as csv_file:
+        reader = csv.DictReader(csv_file, delimiter='|')
+        for row in reader:
+            data.append(row)
+    return data
+
+
+data = read_csv_file('./products_with_colours_using_gallery_image.csv')
+for row in data:
+
+    try:
+        colour = ast.literal_eval(row['colours'])
+    except SyntaxError, e:
+        print 'problem with colour for product ' + row['sku']
+        pass
+    colourxyz = colour[0][0]
+    colourxyzxyz = list(colourxyz) + list(colourxyz)
+
+    idx3d.insert(
+        int(row['entity_id']),
+        colourxyzxyz,
+        obj=row
+    )
 
 
 def query(query, distance=20):
