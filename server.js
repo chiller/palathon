@@ -2,20 +2,7 @@ from flask import Flask
 from rtree import index
 
 
-db = {}
-
-
-def generate_colors(rebuild=True):
-
-    for i in xrange(0, 255, 16):
-        for j in xrange(0, 255, 16):
-            for k in xrange(0, 255, 16):
-                cid = 1000000*i + 1000*j + k
-                if rebuild:
-                    idx3d.insert(cid, (i,j,k,i,j,k))
-
-
-def init_index(name='3d_index'):
+def init_index(name='3d_objects'):
     p = index.Property()
     p.dimension = 3
     p.dat_extension = 'data'
@@ -23,7 +10,6 @@ def init_index(name='3d_index'):
     return index.Index(name, properties=p)
 
 idx3d = init_index()
-generate_colors(rebuild=False)
 
 # API nearest
 
@@ -37,7 +23,7 @@ def query(query, distance=20):
         query[2]+distance
     )
     # return [i for i in idx3d.intersection(query_box)]
-    return [i for i in idx3d.nearest(query_box, 20)]
+    return [i.object for i in idx3d.nearest(query_box, 20, objects=True)]
 
 app = Flask(__name__)
 
