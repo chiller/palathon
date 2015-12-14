@@ -21,7 +21,27 @@ body {
   margin-right: auto ;
 }
 .paletteresult {
-display: inline-block;
-    width: 30px;
-    height: 30px;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50px;
+    margin: 5px;
+}
+
+.paletteresult.active {
+    width: 26px;
+    height: 26px;
+    margin: 2px;
+}
+.paletteresult:hover {
+    width: 26px;
+    height: 26px;
+    margin: 2px;
+}
+
+#palette {
+    margin-bottom: 20px;
+}
+#results a img{
+    width: 200px;
 }

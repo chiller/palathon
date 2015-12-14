@@ -7,7 +7,6 @@ function initDropZone(){
         e.preventDefault();
         e.dataTransfer.dropEffect = 'copy';
     });
-
     // Get file data on drop
     dropZone.addEventListener('drop', function(e) {
         e.stopPropagation();
@@ -21,7 +20,6 @@ function initDropZone(){
                     img.height = 100;
                     img.src= e2.target.result;
                     document.getElementById("dropZone").appendChild(img);
-
                     // Must wait for image to load in DOM, not just load from FileReader
                     image = $("#dropZone img")[0]
                     $(image).on('load', function() {
@@ -38,16 +36,23 @@ function showColorsForImage(image){
         colorstring = color.join(", ")
         return "rgba(" + colorstring + ",100)";
     }
+
+    var getPaletteItem = function(color) {
+       var colorstring = getColorString(color)
+       return "<div class='paletteresult' onclick='getResultsForImage(["+color+"])' style='background-color:" + colorstring +" ' ></div>" ;
+    }
+
     var main_color = colorThief.getColor(image);
-    $("#maincolor").css(
-        "background-color",
-        getColorString(main_color)
-    );
+    $("#palette").append(getPaletteItem(main_color));
+    $("#palette div").toggleClass("active")
 
     colorThief.getPalette(image).forEach(function(color){
-       var colorstring = getColorString(color)
-       paletteelem =  "<div class='paletteresult' style='background-color:" + colorstring +" ' ></div>" ;
-       $("#palette").append(paletteelem);
+       $("#palette").append(getPaletteItem(color));
+    })
+
+    $("#palette div").click(function(elem){
+       $("#palette div").removeClass("active")
+       $(this).toggleClass("active")
     })
 
     getResultsForImage(main_color);
@@ -55,6 +60,7 @@ function showColorsForImage(image){
 
 function getResultsForImage(color){
 
+    $("#results").html("")
     $.get("/colors/3/"+ color.join("/"), function(result){
         result.forEach(function(elem, i){
         $("#results").append("<a href='"+elem.product_url+"'><img src='"+ elem.gallery_img +"' </img></a>")
