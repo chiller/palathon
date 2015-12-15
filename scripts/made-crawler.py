@@ -21,7 +21,7 @@ def debug_msg(msg):
 
 
 def error_msg(msg):
-    logging.log(logging.ERR, msg)
+    logging.log(logging.ERROR, msg)
 
 
 def create_directories():
@@ -74,13 +74,24 @@ def read_csv_file(data_filename):
     data = []
     with open(data_filename, 'rb') as csv_file:
         reader = csv.DictReader(csv_file, delimiter=',')
-        for row in reader:
+        for index, row in enumerate(reader):
+            if 'productno_selection' in row['gallery_img']:
+                continue
+
+            if 'http://www.made.com/media/catalog/product/' == row['gallery_img']:
+                continue
+
             data.append(row)
-    info_msg('Total number of produds found in the CSV: {0}'.format(len(data)))
+
+    parsed_elements = len(data)
+    info_msg('Total number of produds found in the CSV: {0}, total parsed: {1}'.format(
+        index,
+        parsed_elements
+    ))
     return data
 
 
-def save_csv_file(data):
+def save_csv_file(data, invalid_skus):
     fields = data[0].keys()
     filename = '{0}/products_with_colours.csv'.format(RESULT_PATH)
     info_msg('Saving file: {0}'.format(filename))
@@ -88,6 +99,9 @@ def save_csv_file(data):
         writer = csv.DictWriter(csv_file, fieldnames=fields ,delimiter='|')
         writer.writeheader()
         for row in data:
+            if row['sku'] in data:
+                continue
+
             writer.writerow(row)
     return filename
 
@@ -119,6 +133,7 @@ def get_all_colour_images(product_data, image_column):
 def attach_colour_to_product(product_data, using_gallery_img):
     info_msg("Attaching colours to products")
     total_products = len(product_data)
+    invalid_images = []
     for index, data in enumerate(product_data):
         info_msg("[{0}/{1}]Extracting colours for product {2}".format(
             index,
@@ -133,20 +148,22 @@ def attach_colour_to_product(product_data, using_gallery_img):
             product_filename = transform_image_to_rgba(product_filename)
 
         if product_filename is None:
+            invalid_images.append(data['sku'])
             continue
 
         colours_found = palette.extract_colors(product_filename)
 
-        bg_colour = colours_found.bgcolor
-        if bg_colour:
-            data['background'] = (bg_colour.value, bg_colour.prominence)
-        else:
-            data['background'] = None
 
         data['colours'] = [
             (c.value, c.prominence)
             for c in colours_found.colors
         ]
+
+        bg_colour = colours_found.bgcolor
+        if bg_colour:
+            data['colours'].insert(0, (bg_colour.value, bg_colour.prominence))
+
+    return invalid_images
 
 
 def main(args):
@@ -157,8 +174,8 @@ def main(args):
     data = read_csv_file(csv_file)
     get_all_colour_images(data, image_column)
     using_gallery_img = image_column == 'gallery_img'
-    attach_colour_to_product(data, using_gallery_img)
-    result_file = save_csv_file(data)
+    invalid_skus = attach_colour_to_product(data, using_gallery_img)
+    result_file = save_csv_file(data, invalid_skus)
     print "Results saved: {0}".format(result_file)
 
 
