@@ -68,7 +68,7 @@ function getResultsForImage(color){
     })
 })}
 
-$(function(){
+$(window).load(function(){
     colorThief = new ColorThief();
     initDropZone()
     $(".upload-button").click(function() {
