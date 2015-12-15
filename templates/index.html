@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
         <title>Palathon</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
@@ -12,16 +13,22 @@
     <div class="container">
 
       <div class="starter-template">
+
+        <img src="http://www.made.com/skin/frontend/made/default/images/logo.gif">
+        <h4 style="font-family: 'montserratregular',sans-serif; text-transform: uppercase;">Furniture Picker</h4>
+        <p></p>
+        <div class="lead dropZone" id="dropZone" >
+            {% if uploaded %}
+            <img id="uploaded" alt="Uploaded image" height="100" src="data:image/png;base64,{{ uploaded|safe }}" />
+            {% else %}
+            <span class="glyphicon glyphicon-camera" aria-hidden="true" style="font-size: 3.5em; margin-top: 5%" ></span>
+            {% endif %}
+        </div>
         <div class="lead">
             <form id="uploader" action="?" method="POST" enctype="multipart/form-data">
                 <img src="/static/upload.png" class="upload-button"/>
                 <p><input class="uploader" name="image" type="file" accept="image/*"></p>
             </form>
-        </div>
-        <div class="lead dropZone" id="dropZone" >
-            {% if uploaded %}
-            <img id="uploaded" alt="Uploaded image" height="100" src="data:image/png;base64,{{ uploaded|safe }}" />
-            {% endif %}
         </div>
         <div id="palette"></div>
         <div id="results"></div>
@@ -35,5 +42,6 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
     <script type="text/javascript" charset="utf-8" src="/static/script.js" > </script>
     <script type="text/javascript" charset="utf-8" src="/static/color-thief.js" > </script>
+    <div class="">
 </body>
 </html>
