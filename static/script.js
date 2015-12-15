@@ -11,6 +11,7 @@ function initDropZone(){
     dropZone.addEventListener('drop', function(e) {
         e.stopPropagation();
         e.preventDefault();
+        $('#dropZone').html('');
         var files = e.dataTransfer.files; // Array of all files
         for (var i=0, file; file=files[i]; i++) {
             if (file.type.match(/image.*/)) {
@@ -43,7 +44,7 @@ function showColorsForImage(image){
     }
 
     var main_color = colorThief.getColor(image);
-    $("#palette").append(getPaletteItem(main_color));
+    $("#palette").html(getPaletteItem(main_color));
     $("#palette div").toggleClass("active")
 
     colorThief.getPalette(image).forEach(function(color){
