@@ -15,9 +15,14 @@ body {
 
 .uploader {
     width: 300px;
-    background-color: #eee;
+    height: 0px;
     margin-left: auto ;
     margin-right: auto ;
+    opacity: 0;
+}
+
+.upload-button {
+    width: 300px;
 }
 
 .maincolor {

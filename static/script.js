@@ -70,6 +70,9 @@ function getResultsForImage(color){
 $(function(){
     colorThief = new ColorThief();
     initDropZone()
+    $(".upload-button").click(function() {
+        $("input:file").click();
+    });
     $("input:file").change(function (){
         $("#uploader").submit()
     });
