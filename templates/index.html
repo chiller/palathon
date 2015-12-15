@@ -12,7 +12,15 @@
     <div class="container">
 
       <div class="starter-template">
+        <div class="lead">
+            <form id="uploader" action="?" method="POST" enctype="multipart/form-data">
+            <p><input name="image" type="file" accept="image/*" class="form-control"></p>
+            </form>
+        </div>
         <div class="lead dropZone" id="dropZone" >
+            {% if uploaded %}
+            <img id="uploaded" alt="Uploaded image" height="100" src="data:image/png;base64,{{ uploaded|safe }}" />
+            {% endif %}
         </div>
         <div id="palette"></div>
         <div id="results"></div>

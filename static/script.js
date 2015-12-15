@@ -68,6 +68,12 @@ function getResultsForImage(color){
 })}
 
 $(function(){
-    initDropZone()
     colorThief = new ColorThief();
-})
+    initDropZone()
+    $("input:file").change(function (){
+        $("#uploader").submit()
+    });
+    $('#uploaded').each(function() {
+        showColorsForImage(this);
+    });
+});

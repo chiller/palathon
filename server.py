@@ -1,5 +1,7 @@
+import base64
 import json
-from flask import Flask, send_from_directory, Response
+
+from flask import Flask, send_from_directory, Response, request, render_template
 from rtree import index
 import os
 
@@ -35,9 +37,14 @@ def send_static(path):
     return send_from_directory('static', path)
 
 
-@app.route("/")
+@app.route("/", methods=['POST', 'GET'])
 def hello():
-    return app.send_static_file('index.html')
+    if request.method == 'POST':
+        image = request.files['image']
+        content = image.stream.read()
+        uploaded = base64.b64encode(content).decode("utf-8")
+        return render_template('index.html', uploaded=uploaded)
+    return render_template('index.html')
 
 
 @app.route('/colors/<int:num>/<int:r>/<int:g>/<int:b>')
